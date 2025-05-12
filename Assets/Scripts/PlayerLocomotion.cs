@@ -9,7 +9,7 @@ public class PlayerLocomotion : MonoBehaviour
     private Vector3 moveDirection;
     private Transform cameraObject;
 
-    public float movementSpeed = 7;
+    public float movementSpeed = 8;
     public float rotationSpeed = 15;
 
     private void Awake()
