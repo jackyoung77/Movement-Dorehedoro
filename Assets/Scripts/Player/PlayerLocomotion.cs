@@ -9,8 +9,12 @@ public class PlayerLocomotion : MonoBehaviour
     private Vector3 moveDirection;
     private Transform cameraObject;
 
-    public float movementSpeed = 8;
-    public float rotationSpeed = 15;
+    public bool isSprinting;
+
+    public float walkingSpeed = 3f;
+    public float movementSpeed = 8f;
+    public float sprintingSpeed = 12f;
+    public float rotationSpeed = 15f;
 
     private void Awake()
     {
@@ -27,12 +31,29 @@ public class PlayerLocomotion : MonoBehaviour
 
     private void HandleMovement()
     {
+        Vector3 movementVel;
+        
         moveDirection = cameraObject.forward * inputManager.verticalInput;
         moveDirection = moveDirection + cameraObject.right * inputManager.horizontalInput;
         moveDirection.y = 0;
         moveDirection.Normalize();
 
-        Vector3 movementVel = moveDirection * movementSpeed;
+        if (isSprinting)
+        {
+            movementVel = moveDirection * sprintingSpeed;
+        }
+        else
+        {
+            if (inputManager.moveAmount < 0.5f)
+            {
+                movementVel = moveDirection * walkingSpeed;
+            }
+            else
+            {
+                movementVel = moveDirection * movementSpeed;
+            }
+        }
+        
         playerRigidbody.linearVelocity = movementVel;
     }
 

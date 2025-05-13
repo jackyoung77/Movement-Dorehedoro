@@ -4,6 +4,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     PlayerControls playerControls;
+    PlayerLocomotion playerLocomotion;
     PlayerAnimManager playerAnimManager;
 
     public Vector2 movementInput;
@@ -12,14 +13,17 @@ public class InputManager : MonoBehaviour
     public float cameraInputX;
     public float cameraInputY;
     
-    private float moveAmount;
+    public float moveAmount;
     public float verticalInput;
     public float horizontalInput;
+
+    public bool sprintInput;
 
     private void Awake()
     {
         playerAnimManager = GetComponent<PlayerAnimManager>();
-    }
+        playerLocomotion = GetComponent<PlayerLocomotion>();
+}
 
     private void OnEnable()
     {
@@ -29,6 +33,9 @@ public class InputManager : MonoBehaviour
 
             playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>();
             playerControls.PlayerMovement.Camera.performed += i => cameraInput = i.ReadValue<Vector2>();
+            
+            playerControls.PlayerMovement.Sprint.performed += i => sprintInput = true;
+            playerControls.PlayerMovement.Sprint.canceled += i => sprintInput = false;
         }
 
         playerControls.Enable();
@@ -42,6 +49,7 @@ public class InputManager : MonoBehaviour
     public void HandleAllInputs()
     {
         HandleMovementInput();
+        HandleSprintInput();
     }
 
     private void HandleMovementInput()
@@ -53,7 +61,19 @@ public class InputManager : MonoBehaviour
         cameraInputY = cameraInput.y;
         
         moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + Mathf.Abs(verticalInput));
-        playerAnimManager.UpdateAnimatorValues(0,moveAmount);
+        playerAnimManager.UpdateAnimatorValues(0,moveAmount, playerLocomotion.isSprinting);
+    }
+
+    private void HandleSprintInput()
+    {
+        if (sprintInput && moveAmount > 0.5f)
+        {
+            playerLocomotion.isSprinting = true;
+        }
+        else
+        {
+            playerLocomotion.isSprinting = false;
+        }
     }
     
 }
