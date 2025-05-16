@@ -3773,6 +3773,7 @@ GameObject:
   - component: {fileID: 6189675788175582012}
   - component: {fileID: -7628407874068176164}
   - component: {fileID: -516418272974939438}
+  - component: {fileID: -8373052147268553078}
   m_Layer: 3
   m_Name: LowPolyMan
   m_TagString: Untagged
@@ -3830,6 +3831,7 @@ MonoBehaviour:
   horizontalInput: 0
   sprintInput: 0
   jumpInput: 0
+  slideInput: 0
 --- !u!114 &7022036136337164403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3842,11 +3844,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3dd12ea07691b49979d1c482312327, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerRigidbody: {fileID: 0}
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  moveDirection: {x: 0, y: 0, z: 0}
   isSprinting: 0
   isGrounded: 0
+  isSliding: 0
   jumpRemaining: 0
   maxJumps: 2
   jumpForce: 7
@@ -3951,6 +3956,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
+--- !u!114 &-8373052147268553078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8912980239927868551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8878d40d2caf8d48bc05cbbf954a94c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSlideTime: 0.75
+  slideForce: 10
 --- !u!1 &9010523068942595102
 GameObject:
   m_ObjectHideFlags: 0

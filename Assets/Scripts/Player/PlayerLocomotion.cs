@@ -4,15 +4,21 @@ using UnityEngine;
 public class PlayerLocomotion : MonoBehaviour
 {
     InputManager inputManager;
-    Rigidbody playerRigidbody;
+    public Rigidbody playerRigidbody;
+
+    private Sliding sliding;
     
     public LayerMask groundLayerMask;
     
-    private Vector3 moveDirection;
+    public Vector3 moveDirection;
     private Transform cameraObject;
 
     public bool isSprinting;
     public bool isGrounded;
+    public bool isSliding;
+
+    public bool onSlope;
+    public float maxSlopeAngle = 75;
 
     public int jumpRemaining;
     public int maxJumps = 2;
@@ -23,20 +29,24 @@ public class PlayerLocomotion : MonoBehaviour
     public float movementSpeed = 7f;
     public float sprintingSpeed = 10f;
     public float rotationSpeed = 15f;
+    
+    private RaycastHit downHit;
 
     private void Awake()
     {
         inputManager = GetComponent<InputManager>();
         playerRigidbody = GetComponent<Rigidbody>();
         cameraObject = Camera.main.transform;
+        sliding = GetComponent<Sliding>();
     }
 
     public void HandleAllMovement()
     {
-        CheckIsGrounded();
+        CheckIsGroundedOrOnSlope();
         HandleMovement();
         HandleRotation();
         HandleJump();
+        HandleSliding();
     }
 
     private void HandleMovement()
@@ -65,6 +75,12 @@ public class PlayerLocomotion : MonoBehaviour
         }
         
         movementVel.y = playerRigidbody.linearVelocity.y;
+        
+        if (onSlope)
+        {
+            movementVel = GetSlopeMoveDirection(movementVel);
+        }
+        
         playerRigidbody.linearVelocity = movementVel;
     }
 
@@ -86,7 +102,7 @@ public class PlayerLocomotion : MonoBehaviour
         transform.rotation = playerRotation;
     }
 
-	public void HandleJump()
+	private void HandleJump()
 	{
         if (jumpRemaining > 0 && inputManager.jumpInput)
         {
@@ -100,19 +116,36 @@ public class PlayerLocomotion : MonoBehaviour
         
 	}
 
-    private void CheckIsGrounded()
+    private void CheckIsGroundedOrOnSlope()
     {
-        float maxDistance = 0.3f;
+        const float maxDistance = 0.3f;
+        const float sphereRadius = 0.3f;
 
-        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, maxDistance, groundLayerMask) &&
-            playerRigidbody.linearVelocity.y <= 0.1f)
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out downHit, maxDistance, groundLayerMask))
         {
-            isGrounded = true;
+            if (playerRigidbody.linearVelocity.y <= 0.1f)
+            {
+                isGrounded = true;
+            }
+            else
+            {
+                isGrounded = false;
+            }
             
+            float angle = Vector3.Angle(Vector3.up, downHit.normal);
+            if (angle < maxSlopeAngle && angle != 0)
+            {
+                onSlope = true;
+            }
+            else
+            {
+                onSlope = false;
+            }
         }
         else
         {
             isGrounded = false;
+            onSlope = false;
         }
         
         if (isGrounded)
@@ -121,8 +154,21 @@ public class PlayerLocomotion : MonoBehaviour
         }
     }
 
+    public Vector3 GetSlopeMoveDirection(Vector3 direction)
+    {
+        return Vector3.ProjectOnPlane(direction, downHit.normal);
+    }
+
     private void ResetJump()
     {
         jumpRemaining = maxJumps;
+    }
+
+    public void HandleSliding()
+    {
+        if (isSliding && sliding.slideStarted)
+        {
+            sliding.SlidingLocomotion();
+        }
     }
 }

@@ -5,6 +5,7 @@ public class InputManager : MonoBehaviour
 {
     PlayerControls playerControls;
     PlayerLocomotion playerLocomotion;
+    Sliding sliding;
     PlayerAnimManager playerAnimManager;
 
     public Vector2 movementInput;
@@ -19,11 +20,15 @@ public class InputManager : MonoBehaviour
 
     public bool sprintInput;
     public bool jumpInput;
+    public bool slideInput;
+
+    public bool startSliding;
 
     private void Awake()
     {
         playerAnimManager = GetComponent<PlayerAnimManager>();
         playerLocomotion = GetComponent<PlayerLocomotion>();
+        sliding = GetComponent<Sliding>();
 }
 
     private void OnEnable()
@@ -35,12 +40,15 @@ public class InputManager : MonoBehaviour
             playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>();
             playerControls.PlayerMovement.Camera.performed += i => cameraInput = i.ReadValue<Vector2>();
             
-            playerControls.PlayerMovement.Sprint.performed += i => sprintInput = true;
+            playerControls.PlayerMovement.Sprint.started += i => sprintInput = true;
             playerControls.PlayerMovement.Sprint.canceled += i => sprintInput = false;
             
             playerControls.PlayerMovement.Jump.started += i => jumpInput = true;
             playerControls.PlayerMovement.Jump.canceled += i => jumpInput = false;
-		
+            
+            playerControls.PlayerMovement.Slide.started += i => startSliding = true;
+            playerControls.PlayerMovement.Slide.started += i => slideInput = true;
+            playerControls.PlayerMovement.Slide.canceled += i => slideInput = false;
         }
 
         playerControls.Enable();
@@ -55,6 +63,7 @@ public class InputManager : MonoBehaviour
     {
         HandleMovementInput();
         HandleSprintInput();
+        HandleSlideInput();
     }
 
     private void HandleMovementInput()
@@ -78,6 +87,21 @@ public class InputManager : MonoBehaviour
         else
         {
             playerLocomotion.isSprinting = false;
+        }
+    }
+
+    private void HandleSlideInput()
+    {
+        if (startSliding && playerLocomotion.isGrounded && moveAmount > 0.5f)
+            sliding.StartSlide();
+        
+        if (slideInput && sliding.slideTimer >= 0)
+        {
+            playerLocomotion.isSliding = true;
+        }
+        else
+        {
+            playerLocomotion.isSliding = false;
         }
     }
     
