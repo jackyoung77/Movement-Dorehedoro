@@ -3829,6 +3829,7 @@ MonoBehaviour:
   verticalInput: 0
   horizontalInput: 0
   sprintInput: 0
+  jumpInput: 0
 --- !u!114 &7022036136337164403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3841,10 +3842,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3dd12ea07691b49979d1c482312327, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
   isSprinting: 0
+  isGrounded: 0
+  jumpRemaining: 0
+  maxJumps: 2
+  jumpForce: 7
   walkingSpeed: 3
-  movementSpeed: 8
-  sprintingSpeed: 12
+  movementSpeed: 7
+  sprintingSpeed: 10
   rotationSpeed: 15
 --- !u!114 &-6159554582958608397
 MonoBehaviour:
@@ -3892,7 +3900,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8912980239927868551}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 96e064c8c8acad24facffcaee103f5ca, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3904,7 +3912,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.3
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
@@ -3942,6 +3950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3c3ab5da2643d048a5aeebabcd50493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
 --- !u!1 &9010523068942595102
 GameObject:
   m_ObjectHideFlags: 0

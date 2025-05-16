@@ -11,6 +11,7 @@ public class PlayerManager : MonoBehaviour
         inputManager = GetComponent<InputManager>();
         playerLocomotion = GetComponent<PlayerLocomotion>();
         cameraManager = FindAnyObjectByType<CameraManager>();
+        Physics.gravity = new Vector3(0, -19.62f, 0);
     }
 
     private void Update()

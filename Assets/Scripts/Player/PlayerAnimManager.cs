@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerAnimManager : MonoBehaviour
 {
-    private Animator animator;
+    public Animator animator;
     private int horizontal;
     private int vertical;
 
